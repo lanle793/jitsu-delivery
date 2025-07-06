@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -68,6 +69,7 @@ public class RouteService {
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException(routeId));
         List<Shipment> shipments = route.getShipments();
+        shipments.sort(Comparator.comparing(Shipment::getTravelDistance));
         return new RouteInformation(route, shipments);
     }
 }

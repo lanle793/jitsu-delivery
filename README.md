@@ -23,6 +23,7 @@ Assumptions:
 
 1. Warehouse address is entered with latitude and longitude.
 2. The cost, travel distance, travel time of a route saved in the DB would be calculated using cost, travel distance, travel time of all shipments on that route.
+3. Shipments are ordered based on travel distance.
 
 
 Future considerations/modifications:

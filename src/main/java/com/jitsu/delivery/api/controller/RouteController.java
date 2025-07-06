@@ -7,7 +7,7 @@ import com.jitsu.delivery.api.service.RouteService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/route")
+@RequestMapping("/routes")
 public class RouteController {
     private final RouteService routeService;
 

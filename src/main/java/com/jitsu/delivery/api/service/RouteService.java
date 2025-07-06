@@ -1,5 +1,6 @@
 package com.jitsu.delivery.api.service;
 
+import com.jitsu.delivery.api.exception.CostCalculationException;
 import com.jitsu.delivery.api.exception.RouteNotFoundException;
 import com.jitsu.delivery.api.model.Order;
 import com.jitsu.delivery.api.model.Route;
@@ -8,6 +9,7 @@ import com.jitsu.delivery.api.model.Shipment;
 import com.jitsu.delivery.api.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -15,21 +17,31 @@ import java.util.List;
 public class RouteService {
     private final OrderService orderService;
     private final DistanceTimeService distanceTimeService;
+    private final AddressService addressService;
     private final RouteRepository routeRepository;
     @Value("${delivery.avgSpeed:65}")
     private double avgSpeed;
 
-    public RouteService(OrderService orderService, DistanceTimeService distanceTimeService, RouteRepository routeRepository) {
+    public RouteService(OrderService orderService, DistanceTimeService distanceTimeService, AddressService addressService, RouteRepository routeRepository) {
         this.orderService = orderService;
         this.distanceTimeService = distanceTimeService;
+        this.addressService = addressService;
         this.routeRepository = routeRepository;
     }
 
     public Route getLowestCostRoute(String strategy, List<Long> orderIds,
                                     double warehouseLatitude, double warehouseLongitude) {
+        if (!addressService.isGeoCodingValid(warehouseLatitude, warehouseLongitude)) {
+            throw new CostCalculationException("Geocoding fails for provided warehouse latitude and longitude.");
+        }
+
         Route lowestCostRoute = null;
         double lowestCost = Double.MAX_VALUE;
         List<Order> orders = orderService.getOrdersByIds(orderIds);
+
+        if (CollectionUtils.isEmpty(orders)) {
+            throw new CostCalculationException("Fail to retrieve order list for calculation.");
+        }
 
         for (Order order: orders) {
             double destinationLatitude = order.getLatitude();

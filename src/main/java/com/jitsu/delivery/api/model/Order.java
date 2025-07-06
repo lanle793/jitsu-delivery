@@ -22,5 +22,7 @@ public class Order {
     private Instant dropoffStart;
     private Instant dropoffEnd;
     private String regionCode;
-    private Long routeId;
+
+    @OneToOne(mappedBy = "order")
+    private Shipment shipment;
 }

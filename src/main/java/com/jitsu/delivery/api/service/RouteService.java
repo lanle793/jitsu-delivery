@@ -19,14 +19,15 @@ public class RouteService {
     private final DistanceTimeService distanceTimeService;
     private final AddressService addressService;
     private final RouteRepository routeRepository;
-    @Value("${delivery.avgSpeed:65}")
-    private double avgSpeed;
+    private final double avgSpeed;
 
-    public RouteService(OrderService orderService, DistanceTimeService distanceTimeService, AddressService addressService, RouteRepository routeRepository) {
+    public RouteService(OrderService orderService, DistanceTimeService distanceTimeService, AddressService addressService,
+                        RouteRepository routeRepository, @Value("${delivery.avgSpeed:65}") double avgSpeed) {
         this.orderService = orderService;
         this.distanceTimeService = distanceTimeService;
         this.addressService = addressService;
         this.routeRepository = routeRepository;
+        this.avgSpeed = avgSpeed;
     }
 
     public Route getLowestCostRoute(String strategy, List<Long> orderIds,
@@ -59,7 +60,7 @@ public class RouteService {
         return lowestCostRoute;
     }
 
-    double getRouteCost(double travelDistance, double travelTime) {
+    private double getRouteCost(double travelDistance, double travelTime) {
         return travelDistance * 18.75 + travelTime * 0.3;
     }
 

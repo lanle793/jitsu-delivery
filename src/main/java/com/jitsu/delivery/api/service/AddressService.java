@@ -10,9 +10,14 @@ import java.util.Locale;
 
 @Service
 public class AddressService {
+    private final RestTemplate restTemplate;
+
+    public AddressService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public boolean isGeoCodingValid(double latitude, double longitude) {
         // use Nominatim OpenStreetMap API to validate geocoding
-        final RestTemplate restTemplate = new RestTemplate();
         String url = UriComponentsBuilder
                 .newInstance()
                 .scheme("https")
@@ -35,5 +40,4 @@ public class AddressService {
         String upperCode = code.toUpperCase();
         return Arrays.asList(Locale.getISOCountries()).contains(upperCode);
     }
-
 }
